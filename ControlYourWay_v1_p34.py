@@ -294,7 +294,8 @@ class CywInterface:
             self.__locals.download_timeout = self.__locals.constants.minimum_download_timeout
         else:
             self.__locals.download_timeout = value
-        self.send_cancel_request(False)
+        if self.__locals.cyw_state == self.__locals.constants.state_running:
+            self.send_cancel_request(False)
 
     def get_download_timeout(self):
         """Return the amount of time in seconds the download thread will wait before starting a new request if no data
@@ -641,6 +642,17 @@ class CywInterface:
                         elif error_code == '8':  # invalid username or network password
                             if l.error_callback is not None:
                                 l.error_callback(error_code)
+                            # stop service
+                            l.closing_threads = True
+                            l.cyw_state = l.constants.state_request_credentials
+                            self.connected = False
+                            l.download_thread_running = False
+                            l.upload_thread_running = False
+                            l.master_thread_running = False
+                            if l.connection_status_callback is not None:
+                                l.connection_status_callback(False)
+                            if l.enable_debug_messages and l.debug_messages_callback is not None:
+                                l.debug_messages_callback('Invalid user credentials')
                         elif error_code == '20':  # connection problem
                             if l.error_callback is not None:
                                 l.error_callback(error_code)
@@ -980,6 +992,8 @@ class CywInterface:
         :param error_code: The error code, for example: 0
         :return: The description of the error
         """
+        if self.__locals.error_codes is None:
+            return error_code
         error_str = CywInterface.get_cyw_dictionary_single_value(self.__locals.error_codes, error_code)
         if error_str is None:
             error_str = 'Error code not defined'

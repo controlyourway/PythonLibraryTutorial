@@ -100,6 +100,8 @@ class GuiControls():
         else:
             # there was an error
             self.add_debug_message('Connection failed')
+            self.button_start['text'] = 'Start'
+            self.cyw = None
 
 
     def click_button_set_network_names(self):
