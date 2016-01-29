@@ -13,7 +13,6 @@ class GuiControls():
         self.cyw = None
         self.data_received = ''
         self.debug_messages = ''
-        self.packet_id = 0
         self.gui_row_number = 0
 
         gui.title('Control Your Way Tutorial')
