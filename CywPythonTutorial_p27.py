@@ -102,7 +102,6 @@ class GuiControls():
             self.button_start['text'] = 'Start'
             self.cyw = None
 
-
     def click_button_set_network_names(self):
         if self.cyw is not None:
             network_names = self.text_network_names.get("1.0", Tkinter.END).split('\n')
