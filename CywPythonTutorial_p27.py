@@ -11,8 +11,6 @@ class GuiControls():
         pad_y = 3
         self.gui = gui
         self.cyw = None
-        self.data_received = ''
-        self.debug_messages = ''
         self.gui_row_number = 0
 
         gui.title('Control Your Way Tutorial')
@@ -80,7 +78,6 @@ class GuiControls():
         return  self.gui_row_number
 
     def add_debug_message(self, message):
-        self.debug_messages += message + '\n'
         self.text_debug_messages.insert(Tkinter.END, message + '\n')
         self.text_debug_messages.see(Tkinter.END)
 
