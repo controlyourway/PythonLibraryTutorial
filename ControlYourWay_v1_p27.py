@@ -762,7 +762,6 @@ class CywInterface:
                         if l.enable_debug_messages and l.debug_messages_callback is not None:
                             l.debug_messages_callback('Multiple downloads from same session ID')
                     elif d.error_code == '24':     # download request timeout changed
-                        l.cyw_state = l.constants.state_request_credentials
                         if l.enable_debug_messages and l.debug_messages_callback is not None:
                             d_mes = 'Download request timeout changed to: ' + str(l.download_timeout) + ' seconds'
                             l.debug_messages_callback(d_mes)
@@ -819,13 +818,14 @@ class CywInterface:
         l.download_thread_terminated = False
         l.restart_download = False
         l.last_download_successful = False
+        download_started_time = self.get_epoch_time()
         self.print_info('Download thread started')
         while l.download_thread_running:
             wait_before_next_request = False
             if l.cyw_state == l.constants.state_running:
                 url = ''
+                previous_download_started_time = download_started_time
                 download_started_time = self.get_epoch_time()
-                previous_download_started_time = self.get_epoch_time()
                 try:
                     if l.use_encryption:
                         url += l.download_ssl_url
@@ -949,6 +949,7 @@ class CywInterface:
                                 l.last_download_successful = True
                 except:
                     wait_before_next_request = True
+                    l.last_download_successful = False
             if wait_before_next_request:
                 time.sleep(5)
             else:
