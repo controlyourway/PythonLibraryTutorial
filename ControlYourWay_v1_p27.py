@@ -438,10 +438,16 @@ class CywInterface:
         by calling CreateSendData()
         :return: return 0 if successful, 6 if sendData.data is empty
         """
+        upload_data = CreateSendData()
         if send_data.data is None or send_data.data == '':
             return '6'  # there must be data to send
-        send_data.packet_type = self.__locals.constants.data_packet
-        self.__locals.to_master_for_cloud_queue.put(send_data)
+        upload_data.data = self.tilde_encode_data(send_data.data)
+        upload_data.to_session_ids = send_data.to_session_ids
+        for network in send_data.to_networks:
+            upload_data.to_networks.append(self.tilde_encode_data(network))
+        upload_data.data_type = self.tilde_encode_data(send_data.data_type)
+        upload_data.packet_type = self.__locals.constants.data_packet
+        self.__locals.to_master_for_cloud_queue.put(upload_data)
         return '0'
 
     @staticmethod
@@ -798,7 +804,7 @@ class CywInterface:
                     upload_response = UploadResponse()
                     upload_response.packet_type = packet.packet_type
                     if response.status == 200:
-                        upload_response.response = response.read().decode("utf-8")
+                        upload_response.response = response.read()
                     else:
                         upload_response.response = '~e=20'  # Could not establish connection to website
                 except:
@@ -860,7 +866,8 @@ class CywInterface:
                     response = con.getresponse()
                     self.print_info('Download response received')
                     if response.status == 200:
-                        cyw_dict = CywInterface.decode_cyw_protocol(response.read().decode("utf-8"))
+                        temp_resp = response.read()
+                        cyw_dict = CywInterface.decode_cyw_protocol(temp_resp)
                         error_code = CywInterface.get_cyw_dictionary_single_value(cyw_dict, 'e')
                         if error_code is None:
                             l.wait_before_next_request = True
