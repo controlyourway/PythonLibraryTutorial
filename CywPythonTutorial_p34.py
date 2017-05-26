@@ -27,9 +27,9 @@ class GuiControls():
         tkinter.Label(gui, text='Network names:').grid(row=self.get_row_num(True), column=0, padx=pad_x-2, pady=pad_y, sticky='W')
         self.text_network_names = tkinter.Text(gui, wrap=tkinter.WORD, undo=True, height=5, width=15)
         self.text_network_names.grid(row=self.get_row_num(True), column=0, columnspan=1, padx=pad_x-2, pady=0, sticky='WE')
-        self.scroll_network_names = tkinter.Scrollbar(gui, command=self.text_network_names.yview)
-        self.scroll_network_names.grid(row=self.get_row_num(False), column=0, sticky='nsew')
-        self.text_network_names['yscrollcommand'] = self.scroll_network_names.set
+        #self.scroll_network_names = tkinter.Scrollbar(gui, command=self.text_network_names.yview)
+        #self.scroll_network_names.grid(row=self.get_row_num(False), column=0, sticky='nsew')
+        #self.text_network_names['yscrollcommand'] = self.scroll_network_names.set
         self.text_network_names.insert(tkinter.INSERT, 'network 1')
         self.button_set_network_names = tkinter.Button(gui, text='Set network names', width=16, command=self.click_button_set_network_names)
         self.button_set_network_names.grid(row=self.get_row_num(True), column=0, padx=pad_x, pady=pad_y, sticky='W')
