@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import ControlYourWay_v1_p27
+import ControlYourWay_p27
 import Tkinter
 import tkMessageBox
 
@@ -57,14 +57,14 @@ class GuiControls():
         self.button_clear_rec_data.grid(row=self.get_row_num(True), column=0, padx=pad_x, pady=pad_y, sticky='W')
 
         # debug messages
-        Tkinter.Label(gui, text='Debug messages:').grid(row=self.get_row_num(True), column=0, padx=pad_x-2, pady=pad_y, sticky='W')
-        self.text_debug_messages = Tkinter.Text(gui, wrap=Tkinter.WORD, undo=True, height=5, width=40)
-        self.text_debug_messages.grid(row=self.get_row_num(True), column=0, columnspan=3, padx=pad_x-2, pady=0, sticky='WE')
-        self.scroll_debug_messages = Tkinter.Scrollbar(gui, command=self.text_debug_messages.yview)
-        self.scroll_debug_messages.grid(row=self.get_row_num(False), column=3, sticky='nsew')
-        self.text_debug_messages['yscrollcommand'] = self.scroll_debug_messages.set
-        self.button_clear_debug_messages = Tkinter.Button(gui, text='Clear', width=12, command=self.click_clear_debug_messages)
-        self.button_clear_debug_messages.grid(row=self.get_row_num(True), column=0, padx=pad_x, pady=pad_y, sticky='W')
+        Tkinter.Label(gui, text='Messages:').grid(row=self.get_row_num(True), column=0, padx=pad_x-2, pady=pad_y, sticky='W')
+        self.text_messages = Tkinter.Text(gui, wrap=Tkinter.WORD, undo=True, height=5, width=40)
+        self.text_messages.grid(row=self.get_row_num(True), column=0, columnspan=3, padx=pad_x-2, pady=0, sticky='WE')
+        self.scroll_messages = Tkinter.Scrollbar(gui, command=self.text_messages.yview)
+        self.scroll_messages.grid(row=self.get_row_num(False), column=3, sticky='nsew')
+        self.text_messages['yscrollcommand'] = self.scroll_messages.set
+        self.button_clear_messages = Tkinter.Button(gui, text='Clear', width=12, command=self.click_clear_messages)
+        self.button_clear_messages.grid(row=self.get_row_num(True), column=0, padx=pad_x, pady=pad_y, sticky='W')
 
         # set callback for when the window closes. This will terminate the Control Your Way service and
         # stop all the threads
@@ -77,14 +77,14 @@ class GuiControls():
             self.gui_row_number += 1
         return  self.gui_row_number
 
-    def add_debug_message(self, message):
-        self.text_debug_messages.insert(Tkinter.END, message + '\n')
-        self.text_debug_messages.see(Tkinter.END)
+    def add_message(self, message):
+        self.text_messages.insert(Tkinter.END, message + '\n')
+        self.text_messages.see(Tkinter.END)
 
     def data_received_callback(self, data, data_type, from_who):
         if self.cyw.get_discoverable() and data_type == 'Discovery Response':
             # valid discovery response received
-            self.add_debug_message('Device Discovered: ' + data + ', ID: ' + str(from_who))
+            self.add_message('Device Discovered: ' + data + ', ID: ' + str(from_who))
         else:
             message = data + ', ' + data_type + ', ' + str(from_who)
             self.text_rec_data.insert(Tkinter.END, message + '\n')
@@ -92,10 +92,10 @@ class GuiControls():
 
     def connection_status_callback(self, connected):
         if connected:  # connection was successful
-            self.add_debug_message('Connection successful')
+            self.add_message('Connection successful')
         else:
             # there was an error
-            self.add_debug_message('Connection failed')
+            self.add_message('Connection failed')
             self.button_start['text'] = 'Start'
             self.cyw = None
 
@@ -122,7 +122,7 @@ class GuiControls():
                 input_error = True
             if not input_error:
                 # start cyw service
-                self.cyw = ControlYourWay_v1_p27.CywInterface()
+                self.cyw = ControlYourWay_p27.CywInterface()
                 self.cyw.set_user_name(user_name)
                 self.cyw.set_network_password(network_password)
                 self.cyw.set_network_names(network_names)
@@ -138,7 +138,7 @@ class GuiControls():
 
     def click_send_data(self):
         if self.cyw is not None:
-            send_data = ControlYourWay_v1_p27.CreateSendData()
+            send_data = ControlYourWay_p27.CreateSendData()
             send_data.data = self.entry_send_data.get()
             send_data.data_type = 'data'
             if self.cyw.connected:
@@ -149,8 +149,8 @@ class GuiControls():
     def click_clear_rec_data(self):
         self.text_rec_data.delete(1.0, Tkinter.END)
 
-    def click_clear_debug_messages(self):
-        self.text_debug_messages.delete(1.0, Tkinter.END)
+    def click_clear_messages(self):
+        self.text_messages.delete(1.0, Tkinter.END)
 
     def form_closing(self):
         if self.cyw is not None:
@@ -160,5 +160,4 @@ class GuiControls():
 
 
 if __name__ == "__main__":
-    # cyw = CywInterface()
     gui_controls = GuiControls()
