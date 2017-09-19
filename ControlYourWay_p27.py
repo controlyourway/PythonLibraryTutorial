@@ -1332,9 +1332,9 @@ class CywInterface:
             if l.cyw_state == l.constants.state_running:
                 if l.use_websocket:
                     try:
-                    l.websocket.send('~c=t' + l.constants.terminating_string)  # send websocket termination message
-                    l.websocket_state = l.constants.ws_state_closing_connection
-                    l.logger.debug('WebSocket: Close connection message sent')
+                        l.websocket.send('~c=t' + l.constants.terminating_string)  # send websocket termination message
+                        l.websocket_state = l.constants.ws_state_closing_connection
+                        l.logger.debug('WebSocket: Close connection message sent')
                     except Exception, e:
                         l.logger.error('Error closing WebSocket connection: ' + str(e))
                         l.websocket_state = l.constants.ws_state_not_connected
